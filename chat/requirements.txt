@@ -1,0 +1,4 @@
+mlx>=0.0.1
+mlx-lm>=0.0.1
+transformers>=4.30.0
+huggingface-hub>=0.16.0

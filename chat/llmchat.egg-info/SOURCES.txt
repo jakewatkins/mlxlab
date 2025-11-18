@@ -1,0 +1,12 @@
+README.md
+setup.py
+llmchat/__init__.py
+llmchat/__main__.py
+llmchat/chat.py
+llmchat/model_loader.py
+llmchat.egg-info/PKG-INFO
+llmchat.egg-info/SOURCES.txt
+llmchat.egg-info/dependency_links.txt
+llmchat.egg-info/entry_points.txt
+llmchat.egg-info/requires.txt
+llmchat.egg-info/top_level.txt

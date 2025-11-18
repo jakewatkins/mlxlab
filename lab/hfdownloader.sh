@@ -1,0 +1,1 @@
+/Users/jakewatkins/source/trashcode/local-llm/HuggingFaceModelDownloader/hfdownloader/HuggingFaceModelDownloader "$@"
