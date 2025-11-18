@@ -6,6 +6,16 @@ localqa.settings.json
 local.appsettings.json
 backend.tfs
 
+# ignore models
+model/
+adapters/
+
+# ignore data
+data/
+# ignore python libraries
+__pycache__/
+lib/
+
 .DS_Store
 .vs/
 .vscode/
