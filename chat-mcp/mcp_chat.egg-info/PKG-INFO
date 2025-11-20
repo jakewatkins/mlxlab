@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: mcp-chat
+Version: 0.1.0
+Summary: LLM chat application with MCP server integration
+Author: Jake Watkins
+Requires-Python: >=3.9
+Requires-Dist: mlx-lm>=0.18.0
+Requires-Dist: mcp>=0.9.0
+Requires-Dist: transformers
+Requires-Dist: huggingface-hub
+Requires-Dist: rich>=13.0.0
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

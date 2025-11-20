@@ -1,0 +1,13 @@
+README.md
+setup.py
+mcp_chat.egg-info/PKG-INFO
+mcp_chat.egg-info/SOURCES.txt
+mcp_chat.egg-info/dependency_links.txt
+mcp_chat.egg-info/entry_points.txt
+mcp_chat.egg-info/requires.txt
+mcp_chat.egg-info/top_level.txt
+mcpchat/__init__.py
+mcpchat/__main__.py
+mcpchat/chat.py
+mcpchat/mcp_client.py
+mcpchat/model_loader.py

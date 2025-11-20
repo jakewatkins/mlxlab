@@ -1,0 +1,2 @@
+[console_scripts]
+mcp-chat = mcpchat.__main__:main
