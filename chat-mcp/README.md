@@ -29,6 +29,16 @@ mcp-chat mlx-community/Hermes-3-Llama-3.1-8B-4bit
 
 ## Configuration
 
+### Environment Variables (.env)
+
+Create a `.env` file in the same directory where you run mcp-chat to store sensitive values like API keys:
+
+```bash
+BRAVE_API_KEY=your-brave-api-key-here
+```
+
+The `.env` file is automatically loaded when mcp-chat starts and is excluded from git commits.
+
 ### MCP Servers (mcp.json)
 
 Create an `mcp.json` file in the same directory where you run mcp-chat:
@@ -46,12 +56,14 @@ Create an `mcp.json` file in the same directory where you run mcp-chat:
             "command": "npx",
             "args": ["-y", "@modelcontextprotocol/server-brave-search"],
             "env": {
-                "BRAVE_API_KEY": "your-api-key"
+                "BRAVE_API_KEY": "${BRAVE_API_KEY}"
             }
         }
     }
 }
 ```
+
+Use `${VARIABLE_NAME}` syntax to reference environment variables from your `.env` file.
 
 ### System Prompt (config.json)
 

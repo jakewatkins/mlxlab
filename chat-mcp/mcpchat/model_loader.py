@@ -100,7 +100,11 @@ class ModelLoader:
 
         # Generate response with streaming
         try:
+            import time
             response = ""
+            token_count = 0
+            start_time = time.time()
+            
             for text in generate(
                 self.model,
                 self.tokenizer,
@@ -111,8 +115,17 @@ class ModelLoader:
                 # Print streaming output
                 print(text, end="", flush=True)
                 response += text
+                token_count += 1
 
-            print()  # New line after generation
+            end_time = time.time()
+            duration = end_time - start_time
+            
+            # Calculate tokens per second
+            if duration > 0 and token_count > 0:
+                tps = token_count / duration
+                console.print(f"\n[dim]({token_count} tokens, {tps:.2f} tok/s)[/dim]")
+            
+            print()  # New line after stats
             return response
 
         except Exception as e:

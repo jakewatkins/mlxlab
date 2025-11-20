@@ -2,7 +2,9 @@
 
 import asyncio
 import sys
+from pathlib import Path
 
+from dotenv import load_dotenv
 from rich.console import Console
 
 from .chat import ChatSession
@@ -14,6 +16,12 @@ console = Console()
 
 async def async_main(model_path: str) -> None:
     """Async main function."""
+    # Load environment variables from .env file
+    env_file = Path.cwd() / ".env"
+    if env_file.exists():
+        load_dotenv(env_file)
+        console.print(f"[dim]Loaded environment from {env_file}[/dim]")
+    
     # Initialize MCP manager
     mcp_manager = MCPManager()
     

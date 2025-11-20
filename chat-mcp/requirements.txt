@@ -3,3 +3,4 @@ mcp>=0.9.0
 transformers
 huggingface-hub
 rich>=13.0.0
+python-dotenv

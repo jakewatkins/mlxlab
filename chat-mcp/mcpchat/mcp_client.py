@@ -1,5 +1,6 @@
 """MCP server management and communication."""
-
+import os
+import re
 import asyncio
 import json
 import subprocess
@@ -18,9 +19,28 @@ console = Console()
 class MCPServer:
     """Represents a single MCP server connection."""
 
+    def resolve_env_vars(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        """Resolve environment variable references in config."""
+        config = config.copy()
+        if "env" in config:
+            resolved_env = {}
+            for key, value in config["env"].items():
+                # Replace ${VAR_NAME} with actual env var
+                if isinstance(value, str):
+                    resolved_env[key] = re.sub(
+                        r'\$\{([^}]+)\}',
+                        lambda m: os.getenv(m.group(1), ''),
+                        value
+                    )
+                else:
+                    resolved_env[key] = value
+            config["env"] = resolved_env
+        return config
+
+
     def __init__(self, name: str, config: Dict[str, Any]):
         self.name = name
-        self.config = config
+        self.config = self.resolve_env_vars(config)
         self.session: Optional[ClientSession] = None
         self.tools: List[Dict[str, Any]] = []
         self._stdio_context = None
