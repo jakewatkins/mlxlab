@@ -3,12 +3,12 @@
         "filesystem": {
             "type": "stdio",
             "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-filesystem", "/private/tmp/"]
+            "args": ["-y", "@modelcontextprotocol/server-filesystem", "/private/tmp"]
         },
         "brave-search": {
             "type": "stdio",
             "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+            "args": ["-y", "brave-search-mcp"],
             "env": {
                 "BRAVE_API_KEY": "${BRAVE_API_KEY}"
             }

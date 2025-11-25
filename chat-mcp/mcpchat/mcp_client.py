@@ -149,9 +149,19 @@ class MCPServer:
         """Shutdown the MCP server connection."""
         try:
             if self.session:
-                await self.session.__aexit__(None, None, None)
+                try:
+                    await self.session.__aexit__(None, None, None)
+                except Exception as e:
+                    console.print(f"[yellow]Warning:[/yellow] Error shutting down MCP server '{self.name}': {e}")
+                finally:
+                    self.session = None   
             if self._stdio_context:
-                await self._stdio_context.__aexit__(None, None, None)
+                try:
+                    await self._stdio_context.__aexit__(None, None, None)
+                except Exception as e:
+                    console.print(f"[yellow]Warning:[/yellow] Error shutting down MCP server '{self.name}': {e}")
+                finally:
+                    self._stdio_context = None
         except Exception as e:
             console.print(f"[yellow]Warning:[/yellow] Error shutting down MCP server '{self.name}': {e}")
 
