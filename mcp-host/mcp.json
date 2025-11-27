@@ -1,0 +1,13 @@
+{
+    "servers": {
+        "filesystem": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "/Users/jakewatkins/source/trashcode/local-llm/mlx-lab/chat-mcp/"
+            ]
+        }
+    }
+}

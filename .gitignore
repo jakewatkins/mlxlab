@@ -369,8 +369,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-# Backup folder for Package Reference Convert tool in Visual Studio 2017
-MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
@@ -383,13 +381,6 @@ FodyWeavers.xsd
 *.tlog
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
-Infrastructure/terraform/backend.tf
 
-src/Api/Hermes.Api/Properties/
-
-src/Core/Hermes.Core/Properties/
-src/Api/Hermes.Api/Templates/
-/src/API/Hermes.Api/appsettings.json
-/src/API/Hermes.Api/appsettings.json
 
 **/Properties/

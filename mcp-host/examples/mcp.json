@@ -1,0 +1,24 @@
+{
+    "servers": {
+        "brave-search": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "brave-search-mcp"
+            ],
+            "env": {
+                "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+            }
+        },
+        "filesystem": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "/Users/jakewatkins/source/trashcode/local-llm/mlx-lab/chat-mcp/"
+            ]
+        }
+    }
+}

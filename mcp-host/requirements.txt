@@ -1,0 +1,9 @@
+# MCP Host - Production Dependencies
+# This package has no external dependencies - it uses only Python standard library
+
+# Development Dependencies (install with: pip install -e ".[dev]")
+# pytest>=7.0
+# pytest-asyncio>=0.21
+# mypy>=1.0
+# black>=23.0
+# isort>=5.0
