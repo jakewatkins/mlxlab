@@ -119,11 +119,10 @@ class MLXModel:
         """
         Detect tool calls in model output
         
-        This is a simplified parser. Different models use different formats.
-        Common formats:
-        - JSON function calling: {"name": "tool_name", "arguments": {...}}
-        - XML-like: <tool_call>tool_name(arg1=value1)</tool_call>
-        - Plain text: tool_name(arg1=value1, arg2=value2)
+        This parser looks for our specified format:
+        <tool_call>
+        {"name": "tool_name", "arguments": {"param1": "value1"}}
+        </tool_call>
         
         Args:
             text: Generated text to parse
@@ -132,25 +131,37 @@ class MLXModel:
             List of tool calls with name and arguments
         """
         tool_calls = []
-        
-        # Try to detect JSON-style function calls
-        # Look for patterns like: {"name": "calculator", "arguments": {"expression": "2+2"}}
         import json
         
-        # Pattern 1: Look for tool call JSON objects
-        json_pattern = r'\{[^{}]*"name"\s*:\s*"([^"]+)"[^{}]*"arguments"\s*:\s*(\{[^{}]*\})[^{}]*\}'
-        matches = re.finditer(json_pattern, text)
+        # Pattern 1: Look for <tool_call> XML tags with JSON inside
+        xml_pattern = r'<tool_call>\s*(\{[^}]+\})\s*</tool_call>'
+        matches = re.finditer(xml_pattern, text, re.DOTALL)
         
         for match in matches:
-            tool_name = match.group(1)
             try:
-                arguments = json.loads(match.group(2))
-                tool_calls.append({
-                    "name": tool_name,
-                    "arguments": arguments
-                })
+                # Parse the JSON inside the tool_call tags
+                tool_data = json.loads(match.group(1))
+                if "name" in tool_data and "arguments" in tool_data:
+                    tool_calls.append(tool_data)
             except json.JSONDecodeError:
+                # Skip invalid JSON and continue
                 continue
+        
+        # Pattern 2: Fallback - look for standalone JSON tool calls (no XML tags)
+        if not tool_calls:
+            json_pattern = r'\{[^{}]*"name"\s*:\s*"([^"]+)"[^{}]*"arguments"\s*:\s*(\{[^{}]*\})[^{}]*\}'
+            matches = re.finditer(json_pattern, text)
+            
+            for match in matches:
+                tool_name = match.group(1)
+                try:
+                    arguments = json.loads(match.group(2))
+                    tool_calls.append({
+                        "name": tool_name,
+                        "arguments": arguments
+                    })
+                except json.JSONDecodeError:
+                    continue
         
         return tool_calls
     

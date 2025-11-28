@@ -32,6 +32,7 @@ class ServerProcess:
         self.state = ServerState.SHUTDOWN
         self._pending_responses: Dict[str, asyncio.Future] = {}
         self._read_task: Optional[asyncio.Task] = None
+        self._stderr_task: Optional[asyncio.Task] = None
         self._notification_handler: Optional[Callable] = None
     
     async def start(
@@ -74,8 +75,11 @@ class ServerProcess:
             
             logger.info(f"Server '{self.name}' process started with PID {self.process.pid}")
             
-            # Start reading messages
+            # Start reading messages from stdout
             self._read_task = asyncio.create_task(self._read_loop())
+            
+            # Start reading stderr for error logging
+            self._stderr_task = asyncio.create_task(self._read_stderr())
             
         except FileNotFoundError:
             raise ServerStartupError(
@@ -112,9 +116,30 @@ class ServerProcess:
                     logger.error(f"Error handling message from server '{self.name}': {e}")
         
         except asyncio.CancelledError:
-            logger.debug(f"Read loop for server '{self.name}' cancelled")
+            pass  # Clean shutdown
         except Exception as e:
             logger.error(f"Read loop error for server '{self.name}': {e}")
+    
+    async def _read_stderr(self) -> None:
+        """Continuously read and log stderr from the server."""
+        if not self.process or not self.process.stderr:
+            return
+        
+        try:
+            while True:
+                line = await self.process.stderr.readline()
+                if not line:
+                    break
+                
+                # Log stderr output
+                stderr_text = line.decode('utf-8', errors='replace').strip()
+                if stderr_text:
+                    logger.error(f"Server '{self.name}' stderr: {stderr_text}")
+        
+        except asyncio.CancelledError:
+            pass  # Clean shutdown
+        except Exception as e:
+            logger.error(f"Stderr read loop error for server '{self.name}': {e}")
     
     async def _handle_message(self, msg: Dict[str, Any]) -> None:
         """
@@ -137,8 +162,7 @@ class ServerProcess:
             # Notification from server
             if self._notification_handler:
                 await self._notification_handler(self.name, msg)
-            else:
-                logger.debug(f"Received notification from server '{self.name}': {msg.get('method')}")
+            # Otherwise silently ignore notifications
     
     async def send_message(self, msg: Dict[str, Any]) -> None:
         """
@@ -160,7 +184,6 @@ class ServerProcess:
             encoded = JSONRPCMessage.encode(msg)
             self.process.stdin.write(encoded)
             await self.process.stdin.drain()
-            logger.debug(f"Sent message to server '{self.name}': {msg.get('method', 'response')}")
         except Exception as e:
             logger.error(f"Failed to send message to server '{self.name}': {e}")
             raise
@@ -234,11 +257,18 @@ class ServerProcess:
         logger.info(f"Shutting down server '{self.name}'")
         self.state = ServerState.SHUTDOWN
         
-        # Cancel read task
+        # Cancel read tasks
         if self._read_task and not self._read_task.done():
             self._read_task.cancel()
             try:
                 await self._read_task
+            except asyncio.CancelledError:
+                pass
+        
+        if self._stderr_task and not self._stderr_task.done():
+            self._stderr_task.cancel()
+            try:
+                await self._stderr_task
             except asyncio.CancelledError:
                 pass
         
