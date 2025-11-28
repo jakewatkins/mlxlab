@@ -34,6 +34,10 @@ lib/
 # Mono auto generated files
 mono_crash.*
 
+# azureite storage emulator files
+__azurite_db_queue__.json
+__azurite_db_queue_extent__.json
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
