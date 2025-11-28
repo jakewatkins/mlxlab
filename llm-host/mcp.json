@@ -1,5 +1,5 @@
 {
-    "servers": {
+  "servers": {
         "filesystem": {
             "type": "stdio",
             "command": "npx",
@@ -10,8 +10,8 @@
             "command": "npx",
             "args": ["-y", "brave-search-mcp"],
             "env": {
-                "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+                "BRAVE_API_KEY": "BSAZRDwvQ90PZGku19EkmeaVeBpxLrM"
             }
         }
-    }
+  }
 }

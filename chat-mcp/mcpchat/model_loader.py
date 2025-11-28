@@ -146,6 +146,13 @@ class ModelLoader:
         for match in matches:
             try:
                 tool_data = json.loads(match.strip())
+                # Ensure arguments is a dict, not a string
+                if "arguments" in tool_data and isinstance(tool_data["arguments"], str):
+                    try:
+                        tool_data["arguments"] = json.loads(tool_data["arguments"])
+                    except json.JSONDecodeError:
+                        console.print(f"[yellow]Warning: Could not parse arguments string[/yellow]")
+                        tool_data["arguments"] = {}
                 tool_calls.append(tool_data)
             except json.JSONDecodeError:
                 pass
@@ -158,6 +165,13 @@ class ModelLoader:
                 try:
                     tool_data = json.loads(match)
                     if "name" in tool_data and "arguments" in tool_data:
+                        # Ensure arguments is a dict, not a string
+                        if isinstance(tool_data["arguments"], str):
+                            try:
+                                tool_data["arguments"] = json.loads(tool_data["arguments"])
+                            except json.JSONDecodeError:
+                                console.print(f"[yellow]Warning: Could not parse arguments string[/yellow]")
+                                tool_data["arguments"] = {}
                         tool_calls.append(tool_data)
                 except json.JSONDecodeError:
                     pass
@@ -167,9 +181,25 @@ class ModelLoader:
             try:
                 data = json.loads(response.strip())
                 if isinstance(data, dict) and "name" in data:
+                    # Ensure arguments is a dict, not a string
+                    if "arguments" in data and isinstance(data["arguments"], str):
+                        try:
+                            data["arguments"] = json.loads(data["arguments"])
+                        except json.JSONDecodeError:
+                            console.print(f"[yellow]Warning: Could not parse arguments string[/yellow]")
+                            data["arguments"] = {}
                     tool_calls.append(data)
                 elif isinstance(data, list):
-                    tool_calls.extend([t for t in data if isinstance(t, dict) and "name" in t])
+                    for t in data:
+                        if isinstance(t, dict) and "name" in t:
+                            # Ensure arguments is a dict, not a string
+                            if "arguments" in t and isinstance(t["arguments"], str):
+                                try:
+                                    t["arguments"] = json.loads(t["arguments"])
+                                except json.JSONDecodeError:
+                                    console.print(f"[yellow]Warning: Could not parse arguments string[/yellow]")
+                                    t["arguments"] = {}
+                            tool_calls.append(t)
             except json.JSONDecodeError:
                 pass
 

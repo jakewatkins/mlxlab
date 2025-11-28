@@ -1,0 +1,266 @@
+Metadata-Version: 2.4
+Name: llm-host
+Version: 0.1.0
+Summary: MLX-based LLM with MCP tool integration
+Home-page: https://github.com/yourusername/llm-host
+Author: Your Name
+Author-email: your.email@example.com
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: mlx-lm>=0.18.0
+Requires-Dist: rich>=13.0.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
+
+# LLM Host
+
+MLX-based LLM with MCP tool integration - A command-line application that runs large language models using Apple's MLX framework with tool-calling capabilities via Model Context Protocol (MCP) servers.
+
+## Features
+
+- 🚀 **MLX-powered inference** - Uses Apple's MLX framework for efficient on-device LLM inference
+- 🔧 **MCP tool integration** - Connects to MCP servers to provide tools to LLMs
+- 💬 **Streaming responses** - Typewriter-style token streaming for real-time feedback
+- 🔄 **Multi-turn tool execution** - Automatic tool calling with unlimited iterations
+- ⏱️ **Tool monitoring** - Detailed logging of tool calls with timing and results
+- 🎨 **Rich console output** - Colored, formatted output for better readability
+
+## Installation
+
+### Prerequisites
+
+- Python 3.10 or higher
+- macOS (for MLX support)
+
+### Install from source
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/llm-host.git
+cd llm-host
+```
+
+2. Install mcp-host library (required dependency):
+```bash
+pip install -e ../mcp-host
+```
+
+3. Install llm-host:
+```bash
+pip install -e .
+```
+
+## Configuration
+
+### 1. Create `config.json`
+
+Create a `config.json` file in the directory where you'll run `llm-host`:
+
+```json
+{
+  "SystemPrompt": "You are a helpful AI assistant with access to various tools. When you need to perform an action or retrieve information, use the available tools. Always explain what you're doing and provide clear, helpful responses to the user."
+}
+```
+
+See `examples/config.json.example` for a complete example.
+
+### 2. Create `mcp.json`
+
+Create an `mcp.json` file to configure MCP servers:
+
+```json
+{
+  "mcpServers": {
+    "calculator": {
+      "command": "python",
+      "args": ["-m", "mcp_server_calculator"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+    }
+  }
+}
+```
+
+See `examples/mcp.json.example` for more examples.
+
+## Usage
+
+Run LLM Host with a HuggingFace model path:
+
+```bash
+llm-host ibm-granite/granite-4.0-1b
+```
+
+Or use Python module syntax:
+
+```bash
+python -m llmhost ibm-granite/granite-4.0-1b
+```
+
+### Example Session
+
+```
+Loading configurations...
+Starting MCP servers...
+Discovered 2 tools from MCP servers
+Loading model: ibm-granite/granite-4.0-1b
+Ready. Type your prompt or 'quit' to exit.
+prompt -> What is 25 * 37?
+
+[14:32:01] Calling tool: calculator(expression="25 * 37") ...
+[14:32:01] Result: 925 (took 0.12s)
+
+assistant -> The result of 25 multiplied by 37 is 925.
+
+prompt -> quit
+Shutting down MCP servers...
+```
+
+### Commands
+
+- Type your prompt and press Enter to interact with the LLM
+- Type `quit`, `bye`, or `exit` to shutdown
+- Press `Ctrl+C` for graceful shutdown
+
+## Recommended Models
+
+LLM Host works best with models that support function/tool calling:
+
+- **IBM Granite 3.1+** - `ibm-granite/granite-3.1-8b-instruct`
+- **Meta Llama 3.1+** - `meta-llama/Llama-3.1-8B-Instruct`
+- **Qwen 2.5+** - `Qwen/Qwen2.5-7B-Instruct`
+
+Smaller models for testing:
+- `ibm-granite/granite-4.0-1b` - Fast, good for testing
+- `Qwen/Qwen2.5-0.5B-Instruct` - Very small, basic tool calling
+
+## How It Works
+
+1. **Initialization**
+   - Loads `config.json` and `mcp.json`
+   - Starts all configured MCP servers
+   - Downloads/loads the specified MLX model
+   - Discovers available tools from MCP servers
+   - Builds system prompt with tool definitions
+
+2. **Conversation Loop**
+   - Displays `prompt ->` and waits for user input
+   - Sends prompt to LLM with full conversation history
+   - Streams response tokens as they generate
+   - Detects tool calls in model output
+   - Automatically executes tools via MCP servers
+   - Adds tool results to conversation
+   - Continues generation if needed
+   - Returns to prompt
+
+3. **Tool Execution**
+   - Each tool call is logged with timestamp
+   - 90-second timeout per tool
+   - Execution time measured and displayed
+   - Errors handled gracefully without crashing
+   - Results added to conversation for context
+
+## Troubleshooting
+
+### Model not found
+```
+Error: Model 'model-name' not found or not accessible
+```
+- Check the HuggingFace model path is correct
+- Ensure you have internet connectivity for first download
+- Model will be cached in `~/.cache/huggingface/` after first download
+
+### MCP server fails to start
+```
+Error: mcp.json not found in application directory
+```
+- Ensure `mcp.json` exists in the current directory
+- Check JSON syntax is valid
+- Verify server commands are available (e.g., `python`, `npx`)
+
+### Tool timeout
+```
+[14:32:01] ERROR: Tool 'slow_tool' timed out after 90.0s
+```
+- Tool execution is limited to 90 seconds
+- LLM will continue generation after timeout
+- Check if the MCP server is responsive
+
+### Import errors
+```
+ModuleNotFoundError: No module named 'mcp_host'
+```
+- Install mcp-host library: `pip install -e ../mcp-host`
+- Ensure you're in the correct Python environment
+
+## Project Structure
+
+```
+llm-host/
+├── llmhost/              # Main package
+│   ├── __init__.py       # Package initialization
+│   ├── __main__.py       # Entry point for python -m llmhost
+│   ├── cli.py            # Command-line interface and main loop
+│   ├── config.py         # Configuration loading
+│   ├── model.py          # MLX model wrapper
+│   ├── conversation.py   # Conversation history management
+│   ├── tool_executor.py  # Tool execution via mcp-host
+│   └── console.py        # Rich console output
+├── examples/             # Example configurations
+├── setup.py              # Package installation
+├── requirements.txt      # Dependencies
+└── README.md            # This file
+```
+
+## Development
+
+### Running from source
+
+```bash
+cd llm-host
+python -m llmhost ibm-granite/granite-4.0-1b
+```
+
+### Installing in development mode
+
+```bash
+pip install -e .
+```
+
+## Requirements
+
+- Python 3.10+
+- mlx-lm >= 0.18.0
+- rich >= 13.0.0
+- mcp-host (local installation)
+
+## License
+
+MIT License - See LICENSE file for details
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Acknowledgments
+
+- [MLX](https://github.com/ml-explore/mlx) - Apple's machine learning framework
+- [Model Context Protocol](https://modelcontextprotocol.io/) - Protocol for LLM tool integration
+- [Rich](https://github.com/Textualize/rich) - Beautiful terminal formatting

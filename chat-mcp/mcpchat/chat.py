@@ -1,6 +1,7 @@
 """Main chat loop and conversation management."""
 
 import asyncio
+import json
 import signal
 import sys
 from typing import Dict, List, Any, Optional
@@ -22,11 +23,36 @@ class ChatSession:
         self.mcp_manager = mcp_manager
         self.conversation_history: List[Dict[str, str]] = []
         self.max_turns = 3
-        self.system_prompt = load_system_prompt()
+        self.system_prompt = self._build_system_prompt()
         self.running = True
 
         # Setup signal handlers
         signal.signal(signal.SIGINT, self._signal_handler)
+
+    def _build_system_prompt(self) -> str:
+        """Build system prompt with tool schemas."""
+        base_prompt = load_system_prompt()
+        
+        # Get tools from MCP servers
+        tools = self.mcp_manager.get_all_tools()
+        
+        if not tools:
+            return base_prompt
+        
+        # Add tool schemas to system prompt
+        tool_descriptions = "\n\n## Available Tools\n\n"
+        tool_descriptions += "You have access to the following tools. Use the EXACT parameter names shown below:\n\n"
+        
+        for tool in tools:
+            if tool.get('type') == 'function':
+                toolFunction = tool.get('function')
+                tool_descriptions += f"### {toolFunction['name']}\n"
+                tool_descriptions += f"{toolFunction.get('description', 'No description')}\n\n"
+                tool_descriptions += "**Parameters:**\n```json\n"
+                tool_descriptions += json.dumps(toolFunction.get('parameters', {}), indent=2)
+                tool_descriptions += "\n```\n\n"
+        
+        return base_prompt + tool_descriptions
 
     def _signal_handler(self, signum, frame):
         """Handle Ctrl+C gracefully."""
