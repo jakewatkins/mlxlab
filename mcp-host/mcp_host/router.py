@@ -250,7 +250,7 @@ class RequestRouter:
                 
                 # Record success metric
                 if self.metrics:
-                    self.metrics.record_request(
+                    await self.metrics.record_request(
                         server_name,
                         request.get("method", "unknown"),
                         latency=0.0,  # Will be updated by execute_with_timeout
@@ -265,7 +265,7 @@ class RequestRouter:
                 
                 # Record failure metric
                 if self.metrics:
-                    self.metrics.record_request(
+                    await self.metrics.record_request(
                         server_name,
                         request.get("method", "unknown"),
                         latency=timeout,
@@ -297,7 +297,7 @@ class RequestRouter:
             except Exception as e:
                 # Record failure metric
                 if self.metrics:
-                    self.metrics.record_request(
+                    await self.metrics.record_request(
                         server_name,
                         request.get("method", "unknown"),
                         latency=0.0,
@@ -355,7 +355,7 @@ class RequestRouter:
             
             # Record metric
             if self.metrics:
-                self.metrics.record_request(
+                await self.metrics.record_request(
                     server_name,
                     request.get("method", "unknown"),
                     latency=latency,

@@ -5,6 +5,7 @@ Command-line interface and main application loop
 import sys
 import signal
 import asyncio
+import logging
 from typing import Optional
 
 from llmhost.config import load_config, load_mcp_config, ConfigError
@@ -12,6 +13,12 @@ from llmhost.console import Console
 from llmhost.model import MLXModel, ModelError
 from llmhost.conversation import ConversationHistory
 from llmhost.tool_executor import ToolExecutor
+
+# Configure logging at WARNING level to reduce noise
+logging.basicConfig(
+    level=logging.WARNING,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 
 class LLMHost:
@@ -81,6 +88,7 @@ class LLMHost:
             sys.exit(1)
         except Exception as e:
             self.console.print_error(f"Initialization failed: {e}")
+            
             sys.exit(1)
     
     async def process_turn(self, user_input: str):

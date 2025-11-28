@@ -77,6 +77,11 @@ class ToolExecutor:
         start_time = time.time()
         
         try:
+            # Validate that args is a dict (MCP requires this)
+            if not isinstance(args, dict):
+                error_msg = f"Tool arguments must be a dictionary, got {type(args).__name__}"
+                return None, error_msg, time.time() - start_time
+            
             # Call tool via mcp-host
             result = await asyncio.wait_for(
                 self.host.call_tool(name, args),
@@ -145,20 +150,36 @@ class ToolExecutor:
                         f"    - {param_name} ({param_type}){req_marker}: {param_desc}"
                     )
                     
-                    # Build example argument
+                    # Build contextual example argument based on parameter name and type
                     if param_type == "string":
-                        example_args[param_name] = "example_value"
+                        # Use parameter name to create contextual examples
+                        if "path" in param_name.lower() or "file" in param_name.lower():
+                            example_args[param_name] = "/path/to/file.txt"
+                        elif "content" in param_name.lower() or "text" in param_name.lower():
+                            example_args[param_name] = "file content here"
+                        elif "query" in param_name.lower() or "search" in param_name.lower():
+                            example_args[param_name] = "search query"
+                        elif "uri" in param_name.lower() or "url" in param_name.lower():
+                            example_args[param_name] = "https://example.com"
+                        elif "name" in param_name.lower():
+                            example_args[param_name] = "example_name"
+                        else:
+                            example_args[param_name] = "example_value"
                     elif param_type == "number" or param_type == "integer":
                         example_args[param_name] = 123
                     elif param_type == "boolean":
                         example_args[param_name] = True
+                    elif param_type == "array":
+                        example_args[param_name] = []
+                    elif param_type == "object":
+                        example_args[param_name] = {}
                     else:
                         example_args[param_name] = "value"
                 
                 if param_list:
                     tool_desc += "\n  Parameters:\n" + "\n".join(param_list)
                     
-                # Add example usage
+                # Add example usage with proper formatting
                 if example_args:
                     example_json = json.dumps({"name": tool_name, "arguments": example_args}, indent=2)
                     tool_desc += f"\n  Example:\n  <tool_call>\n  {example_json}\n  </tool_call>"

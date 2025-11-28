@@ -1,4 +1,9 @@
+LICENSE
+MANIFEST.in
 README.md
+pyproject.toml
+requirements-dev.txt
+requirements.txt
 setup.py
 mcp_host/__init__.py
 mcp_host/cache.py
@@ -7,6 +12,7 @@ mcp_host/exceptions.py
 mcp_host/host.py
 mcp_host/metrics.py
 mcp_host/protocol.py
+mcp_host/py.typed
 mcp_host/registry.py
 mcp_host/router.py
 mcp_host/server.py

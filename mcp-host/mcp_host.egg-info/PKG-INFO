@@ -4,7 +4,13 @@ Version: 0.1.0
 Summary: A Python module for hosting and managing MCP servers
 Home-page: https://github.com/yourusername/mcp-host
 Author: Your Name
-Author-email: your.email@example.com
+Author-email: Jake Watkins <jake@example.com>
+License: MIT
+Project-URL: Homepage, https://github.com/jakewatkins/mcp-host
+Project-URL: Documentation, https://github.com/jakewatkins/mcp-host#readme
+Project-URL: Repository, https://github.com/jakewatkins/mcp-host
+Project-URL: Issues, https://github.com/jakewatkins/mcp-host/issues
+Keywords: mcp,model-context-protocol,llm,ai,tools
 Classifier: Development Status :: 3 - Alpha
 Classifier: Intended Audience :: Developers
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
@@ -15,21 +21,19 @@ Classifier: Programming Language :: Python :: 3.11
 Classifier: Programming Language :: Python :: 3.12
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
+License-File: LICENSE
 Provides-Extra: dev
 Requires-Dist: pytest>=7.0; extra == "dev"
 Requires-Dist: pytest-asyncio>=0.21; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
 Requires-Dist: mypy>=1.0; extra == "dev"
 Requires-Dist: black>=23.0; extra == "dev"
 Requires-Dist: isort>=5.0; extra == "dev"
+Requires-Dist: flake8>=6.0; extra == "dev"
 Dynamic: author
-Dynamic: author-email
-Dynamic: classifier
-Dynamic: description
-Dynamic: description-content-type
 Dynamic: home-page
-Dynamic: provides-extra
+Dynamic: license-file
 Dynamic: requires-python
-Dynamic: summary
 
 # MCP Host
 
