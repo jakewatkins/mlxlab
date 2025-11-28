@@ -1,0 +1,2 @@
+[console_scripts]
+llm-host = llmhost.cli:main

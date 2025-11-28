@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "calculator": {
+      "command": "python",
+      "args": ["-m", "mcp_server_calculator"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+    }
+  }
+}

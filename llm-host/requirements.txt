@@ -1,0 +1,9 @@
+# MLX for model inference
+mlx-lm>=0.18.0
+
+# Console formatting
+rich>=13.0.0
+
+# MCP host library (install from local path)
+# Install with: pip install -e ../mcp-host
+# mcp-host
