@@ -1,0 +1,6 @@
+{
+  "name": "read_text_file",
+  "arguments": {
+    "path": "/Users/jakewatkins/source/trashcode/local-llm/mlx-lab/llm-cli/test/test-prompt.txt"
+  }
+}

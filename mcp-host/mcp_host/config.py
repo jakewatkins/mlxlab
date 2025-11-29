@@ -59,6 +59,49 @@ class ConfigLoader:
         self._config: Dict[str, Any] = {}
         self._config_path: str = ""
     
+    def _load_env_file(self, env_path: str | None = None) -> None:
+        """
+        Load environment variables from a .env file.
+        
+        Args:
+            env_path: Path to .env file. If None, looks for .env in config directory.
+        """
+        if env_path is None:
+            # Look for .env in same directory as config file
+            config_dir = os.path.dirname(self._config_path) if self._config_path else "."
+            env_path = os.path.join(config_dir, ".env")
+        
+        if not os.path.exists(env_path):
+            # .env file is optional
+            return
+        
+        try:
+            with open(env_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    
+                    # Skip empty lines and comments
+                    if not line or line.startswith('#'):
+                        continue
+                    
+                    # Parse KEY=VALUE format
+                    if '=' in line:
+                        key, _, value = line.partition('=')
+                        key = key.strip()
+                        value = value.strip()
+                        
+                        # Remove quotes if present
+                        if value and value[0] in ('"', "'") and value[0] == value[-1]:
+                            value = value[1:-1]
+                        
+                        # Only set if not already in environment
+                        if key and key not in os.environ:
+                            os.environ[key] = value
+        except Exception as e:
+            # Log warning but don't fail - .env is optional
+            import warnings
+            warnings.warn(f"Failed to load .env file: {e}")
+    
     def load(self, config_path: str) -> Dict[str, Any]:
         """
         Load configuration from file.
@@ -101,6 +144,9 @@ class ConfigLoader:
         
         # Check for duplicate server names (already done by dict, but explicit check)
         self._check_duplicates()
+        
+        # Load .env file if present
+        self._load_env_file()
         
         # Expand environment variables
         self._config = self.expand_env_vars(self._config)
