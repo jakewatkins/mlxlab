@@ -64,12 +64,33 @@ Create an `mcp.json` file to configure MCP servers:
     "filesystem": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "brave-search-mcp"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      }
     }
   }
 }
 ```
 
 See `examples/mcp.json.example` for more examples.
+
+### 3. Environment Variables (Optional)
+
+You can store API keys and other sensitive configuration in a `.env` file:
+
+```bash
+# Copy the example file
+cp .env.example .env
+
+# Edit .env and add your keys
+BRAVE_API_KEY=your_api_key_here
+```
+
+The `.env` file will be automatically loaded if present. Environment variables in `mcp.json` can reference these values using `${VARIABLE_NAME}` syntax.
 
 ## Usage
 
