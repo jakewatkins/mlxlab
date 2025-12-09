@@ -1,0 +1,21 @@
+{
+  "servers": {
+        "brave-search": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "brave-search-mcp"],
+            "env": {
+                "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+            }
+        },
+        "web-scraper": {
+            "type": "stdio",            
+            "command": "npx",
+            "args": ["-y", "puppeteer-vision-mcp-server"],
+            "env": {
+                "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+            }
+        }
+    }
+}
+

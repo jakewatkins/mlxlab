@@ -1,0 +1,162 @@
+# LLM Server
+
+HTTP server for MLX-based LLM inference with MCP (Model Context Protocol) tool support.
+
+## Features
+
+- HTTP POST API for LLM inference
+- MLX framework integration for efficient Apple Silicon inference
+- MCP tool support for extending LLM capabilities
+- Configurable model parameters (temperature, top_p, min_p, etc.)
+- Daily log rotation
+- Graceful shutdown handling
+- Concurrent request handling
+
+## Installation
+
+```bash
+cd llm-server
+pip install -e .
+```
+
+Or install from requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Configuration
+
+Create a `config.json` file in the directory where you'll run the server:
+
+```json
+{
+  "model_name": "mlx-community/Qwen2.5-0.5B-Instruct-4bit",
+  "listening_port": 8080,
+  "servers": {
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem@latest", "/path/to/workspace"]
+    }
+  },
+  "system_prompt": "You are a helpful AI assistant.",
+  "temperature": 0.7,
+  "top_p": 1.0,
+  "min_p": 0.0,
+  "min_tokens_to_keep": 1,
+  "log_level": "warning",
+  "log_filename": "/tmp/llmserver.log"
+}
+```
+
+See `config.json.example` for a complete example.
+
+### Configuration Fields
+
+- **model_name**: Hugging Face model name (e.g., `mlx-community/Qwen2.5-0.5B-Instruct-4bit`)
+- **listening_port**: Port number for HTTP server (e.g., `8080`)
+- **servers**: MCP server configurations (can be empty `{}` for no tools)
+- **system_prompt**: System prompt for the LLM
+- **temperature**: Sampling temperature (0.0 to 1.0+)
+- **top_p**: Top-p sampling parameter
+- **min_p**: Minimum p sampling parameter
+- **min_tokens_to_keep**: Minimum tokens to keep during sampling
+- **log_level**: Logging level (`trace`, `warning`, or `error`)
+- **log_filename**: Full path to log file (supports daily rotation)
+
+### Environment Variables
+
+Config values can reference environment variables using `${VAR_NAME}` syntax. The server will:
+1. First check system environment variables
+2. Then check `.env` file in the current working directory
+3. Exit with error if variable not found
+
+Example `.env` file:
+```
+BRAVE_API_KEY=your-api-key-here
+```
+
+## Usage
+
+### Start the Server
+
+```bash
+cd /path/to/your/working/directory
+llm-server
+```
+
+Or run as a module:
+
+```bash
+python -m llmserver
+```
+
+### Make Requests
+
+Send POST requests to the server:
+
+```bash
+curl -X POST http://localhost:8080 \
+  -H "Content-Type: application/json" \
+  
+  -d '{"prompt": "What is the capital of France?"}'
+```
+
+Response:
+
+```json
+{
+  "response": "The capital of France is Paris."
+}
+```
+
+### Error Responses
+
+Validation errors (HTTP 400):
+```json
+{
+  "Error": "Missing 'prompt' field"
+}
+```
+
+Server errors (HTTP 500):
+```json
+{
+  "Error": "Error processing request: ..."
+}
+```
+
+## Shutdown
+
+The server handles graceful shutdown on SIGTERM or SIGINT (Ctrl+C):
+1. Stops accepting new requests
+2. Waits for in-flight requests to complete
+3. Shuts down MCP servers
+4. Unloads model
+5. Exits
+
+## Logging
+
+Logs are written to the configured log file with daily rotation. Rotated files are named with the pattern: `filename-YYYYMMDD`
+
+Log entries include:
+- Incoming requests
+- Generated responses
+- Errors
+- Information written to stderr
+
+## Requirements
+
+- Python 3.10+
+- MLX framework (automatically installed with mlx-lm)
+- Apple Silicon Mac (for MLX support)
+- Node.js (if using NPX-based MCP servers)
+
+## Dependencies
+
+The server requires the `mcp-host` library located at `/Users/jakewatkins/source/projects/mlx-lab/mcp-host`.
+
+## License
+
+MIT

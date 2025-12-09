@@ -1,0 +1,15 @@
+{
+  "servers": {
+    "brave-search": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "brave-search-mcp"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "BSAZRDwvQ90PZGku19EkmeaVeBpxLrM"
+      }
+    }
+  }
+}
