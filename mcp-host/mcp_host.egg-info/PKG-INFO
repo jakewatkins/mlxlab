@@ -137,7 +137,7 @@ Each server in `mcp.json` has the following structure:
 
 ### Environment Variables
 
-Environment variables in the config are expanded from the system environment:
+Environment variables in the config are expanded from the system environment or from a `.env` file:
 
 ```json
 {
@@ -146,6 +146,20 @@ Environment variables in the config are expanded from the system environment:
     "DEBUG": "true"
   }
 }
+```
+
+The config loader will automatically look for a `.env` file in the same directory as `mcp.json` and load environment variables from it. Variables already set in the system environment take precedence over those in the `.env` file.
+
+Example `.env` file:
+
+```bash
+# API Keys
+BRAVE_API_KEY=your_api_key_here
+OPENAI_API_KEY=sk-...
+
+# Configuration
+DEBUG=true
+LOG_LEVEL=info
 ```
 
 ## API Reference

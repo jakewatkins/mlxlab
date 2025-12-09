@@ -3,7 +3,7 @@
         "filesystem": {
             "type": "stdio",
             "command": "npx",
-            "args": ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/jakewatkins/source/trashcode/local-llm/mlx-lab/chat-mcp/"]
+            "args": ["-y", "@modelcontextprotocol/server-filesystem@latest", "/Users/jakewatkins/temp/"]
         },
         "brave-search": {
             "type": "stdio",
