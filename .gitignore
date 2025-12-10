@@ -11,6 +11,11 @@ backend.tfs
 # ignore models
 model/
 adapters/
+trained-models/
+
+# ignore training data
+local-ai/training-data/
+
 
 # ignore data
 data/
