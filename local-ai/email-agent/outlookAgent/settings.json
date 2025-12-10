@@ -1,0 +1,16 @@
+{
+  "keyvaultName": "kvGPSecrets",
+  "RetrievalCount": 100,
+  "MaxAttachmentSize": 1048576,
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning"
+    },
+    "File": {
+      "Path": "outlookAgent.log",
+      "RollingInterval": "Day",
+      "RetainedFileCountLimit": 7
+    }
+  }
+}
