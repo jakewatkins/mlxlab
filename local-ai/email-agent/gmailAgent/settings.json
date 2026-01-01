@@ -8,7 +8,7 @@
       "Microsoft": "Warning"
     },
     "File": {
-      "Path": "outlookAgent.log",
+      "Path": "gmailAgent.log",
       "RollingInterval": "Day",
       "RetainedFileCountLimit": 7
     }
